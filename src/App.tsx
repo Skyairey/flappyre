@@ -120,6 +120,9 @@ const CoinComponent: React.FC<CoinProps> = ({ x, y, collected }) => {
 
 // --- Main App Component ---
 export default function App() {
+  // Responsive state
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 768);
+  
   const [birdPosition, setBirdPosition] = useState(GAME_HEIGHT / 2);
   const [birdRotation, setBirdRotation] = useState(0); // <-- New state for rotation
   const [gameHasStarted, setGameHasStarted] = useState(false);
@@ -170,6 +173,16 @@ export default function App() {
       return `${secs}.${ms.toString().padStart(2, "0")}s`;
     }
   };
+
+  // --- Responsive design handling ---
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // --- Timer-based Scoring ---
   useEffect(() => {
@@ -598,15 +611,16 @@ export default function App() {
         position: "relative",
       }}
     >
-      {/* Leaderboard - Fixed position on left */}
+      {/* Leaderboard - Responsive positioning */}
       <div
         style={{
           position: "fixed",
-          left: "20px",
-          top: "50%",
-          transform: "translateY(-50%)",
-          width: "250px",
-          height: `${GAME_HEIGHT}px`,
+          left: !isMobileView ? "20px" : "10px",
+          top: !isMobileView ? "50%" : "10px",
+          transform: !isMobileView ? "translateY(-50%)" : "none",
+          width: !isMobileView ? "250px" : "calc(100vw - 20px)",
+          height: !isMobileView ? `${GAME_HEIGHT}px` : "auto",
+          maxHeight: isMobileView ? "30vh" : `${GAME_HEIGHT}px`,
           // Translucent background with stars
           backgroundImage: `
             radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.8), transparent),
@@ -745,13 +759,18 @@ export default function App() {
           justifyContent: "center",
           width: "100%",
           minHeight: "100vh",
+          paddingTop: isMobileView ? "35vh" : "0",
+          paddingLeft: !isMobileView ? "270px" : "0",
+          paddingRight: !isMobileView ? "0" : "0",
         }}
       >
         {/* Game Container */}
         <div
           style={{
-            width: `${GAME_WIDTH}px`,
-            height: `${GAME_HEIGHT}px`,
+            width: !isMobileView ? `${GAME_WIDTH}px` : "90vw",
+            height: !isMobileView ? `${GAME_HEIGHT}px` : "90vw",
+            maxWidth: `${GAME_WIDTH}px`,
+            maxHeight: `${GAME_HEIGHT}px`,
             // Night time background with stars
             backgroundImage: `
             radial-gradient(2px 2px at 20px 30px, #ffffff, transparent),
@@ -827,23 +846,25 @@ export default function App() {
           <div
             style={{
               position: "absolute",
-              top: "16px", // top-4
-              right: "16px", // right-4
+              top: isMobileView ? "8px" : "16px",
+              right: isMobileView ? "8px" : "16px",
               color: "#ffd700", // Gold color
-              fontSize: "1.5rem", // text-2xl
+              fontSize: isMobileView ? "1.2rem" : "1.5rem",
               fontWeight: "bold",
               textShadow: "2px 2px 0 rgba(0, 0, 0, 0.5)",
               display: "flex",
               alignItems: "center",
-              gap: "8px",
+              gap: isMobileView ? "4px" : "8px",
+              zIndex: 20,
             }}
           >
             <img
               src={process.env.PUBLIC_URL + "/dappies.svg"}
               alt="Dappies"
-              style={{ width: "24px", height: "24px",
-                
-                }}
+              style={{ 
+                width: isMobileView ? "20px" : "24px", 
+                height: isMobileView ? "20px" : "24px",
+              }}
             />
             {coinsCollected}
           </div>

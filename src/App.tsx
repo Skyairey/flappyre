@@ -30,7 +30,7 @@ interface Coin {
 }
 
 // --- Constants ---
-const BIRD_SIZE = 60;
+const BIRD_SIZE = 70;
 const GAME_WIDTH = 500;
 const GAME_HEIGHT = 500;
 const GRAVITY = 6;
@@ -477,11 +477,12 @@ export default function App() {
   useEffect(() => {
     const hasHitGround = birdPosition >= GAME_HEIGHT - BIRD_SIZE;
 
-    // Bird's collision box
-    const birdLeft = 100;
-    const birdRight = birdLeft + BIRD_SIZE;
-    const birdTop = birdPosition;
-    const birdBottom = birdPosition + BIRD_SIZE;
+    // Bird's collision box (smaller than visual size for better gameplay)
+    const COLLISION_MARGIN = 20; // Reduce collision box by 15px on each side
+    const birdLeft = 100 + COLLISION_MARGIN;
+    const birdRight = birdLeft + BIRD_SIZE - COLLISION_MARGIN * 2;
+    const birdTop = birdPosition + COLLISION_MARGIN;
+    const birdBottom = birdPosition + BIRD_SIZE - COLLISION_MARGIN;
 
     // Obstacle collision box
     const obstacleLeft = obstaclePosition;
@@ -518,10 +519,12 @@ export default function App() {
 
   // --- Coin Collision Detection ---
   useEffect(() => {
-    const birdLeft = 100;
-    const birdRight = birdLeft + BIRD_SIZE;
-    const birdTop = birdPosition;
-    const birdBottom = birdPosition + BIRD_SIZE;
+    // Use same collision margins as obstacles for consistency
+    const COLLISION_MARGIN = 15;
+    const birdLeft = 100 + COLLISION_MARGIN;
+    const birdRight = birdLeft + BIRD_SIZE - COLLISION_MARGIN * 2;
+    const birdTop = birdPosition + COLLISION_MARGIN;
+    const birdBottom = birdPosition + BIRD_SIZE - COLLISION_MARGIN;
 
     setCoins((prevCoins) =>
       prevCoins.map((coin) => {

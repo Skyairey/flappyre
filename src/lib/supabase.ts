@@ -1,32 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Get Supabase credentials from environment variables
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
-const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY
-
-console.log('🔍 Supabase env vars:', {
-  url: supabaseUrl ? '✓ set' : '✗ missing',
-  key: supabaseKey ? '✓ set' : '✗ missing',
-})
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL!
+const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY!
 
 if (!supabaseUrl || !supabaseKey) {
-  const error = new Error(
-    `Missing Supabase environment variables.\nURL: ${supabaseUrl ? '✓' : '✗'}\nKEY: ${supabaseKey ? '✓' : '✗'}`
-  )
-  console.error('❌ Supabase init failed:', error)
-  throw error
+  throw new Error('Missing Supabase environment variables. Please check your .env file.')
 }
 
-let supabase
-try {
-  supabase = createClient(supabaseUrl, supabaseKey)
-  console.log('✅ Supabase client initialized successfully')
-} catch (err) {
-  console.error('❌ Failed to create Supabase client:', err)
-  throw err
-}
-
-export { supabase }
+export const supabase = createClient(supabaseUrl, supabaseKey)
 
 // Types for our database
 export interface LeaderboardEntry {
